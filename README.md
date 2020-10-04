@@ -1,3 +1,7 @@
+![Shellcheck CI](https://github.com/pforret/ghlookup/workflows/Shellcheck%20CI/badge.svg)
+![Bash CI](https://github.com/pforret/ghlookup/workflows/Bash%20CI/badge.svg)
+[![basher install](https://img.shields.io/badge/basher-install-white?logo=gnu-bash&style=flat)](https://basher-packages.forret.com/package/)
+
 # ghlookup
 
 Lookup Github info via API in bash
@@ -18,6 +22,11 @@ Lookup Github info via API in bash
 	    <path>    : [parameter] <user> or <user/repo>
 	    <field>   : [parameter] field to retrieve:  name
 
+
+## Installation
+
+	basher install pforret/ghlookup
+	
 ## Examples
 
 	> ghlookup user cli .
@@ -56,7 +65,6 @@ Lookup Github info via API in bash
 	cli
 	scoop-gh
 	shurcooL-graphql
-
 
 ## authenticated or not
 
