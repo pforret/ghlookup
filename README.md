@@ -57,8 +57,16 @@ Lookup Github info via API in bash
 	scoop-gh
 	shurcooL-graphql
 
+
+## authenticated or not
+
+* works without Github API authentication (max 60 calls/hour)
+* optionally works with Github personal tokens via .env file (max 5000 calls/hour)
+
 ## Created with [bashew](https://github.com/pforret/bashew)
 
 in 1 hour
+
+
 
 &copy; 2020 Peter Forret - MIT License
