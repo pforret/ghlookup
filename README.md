@@ -1,5 +1,5 @@
-# lookup_github
+# ghlookup
 
 Lookup Github info via API in bash
 
-(c) 2020 Peter Forret
+&copy; 2020 Peter Forret - MIT License
