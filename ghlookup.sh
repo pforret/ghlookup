@@ -1,12 +1,4 @@
 #!/usr/bin/env bash
-### ==============================================================================
-### SO HOW DO YOU PROCEED WITH YOUR SCRIPT?
-### 1. define the options/parameters and defaults you need in list_options()
-### 2. implement the different actions in main() with helper functions
-### 3. implement helper functions you defined in previous step
-### 4. add binaries your script needs (e.g. ffmpeg, jq) to verify_programs
-### ==============================================================================
-
 ### Created by Peter Forret ( pforret ) on 2020-10-04
 script_version="0.0.0"  # if there is a VERSION.md in this script's folder, it will take priority for version number
 readonly script_author="peter@forret.com"
@@ -14,29 +6,16 @@ readonly script_creation="2020-10-04"
 readonly run_as_root=-1 # run_as_root: 0 = don't check anything / 1 = script MUST run as root / -1 = script MAY NOT run as root
 
 list_options() {
-  ### Change the next lines to reflect which flags/options/parameters you need
-  ### flag:   switch a flag 'on' / no extra parameter
-  ###     flag|<short>|<long>|<description>
-  ###     e.g. "-v" or "--verbose" for verbose output / default is always 'off'
-  ### option: set an option value / 1 extra parameter
-  ###     option|<short>|<long>|<description>|<default>
-  ###     e.g. "-e <extension>" or "--extension <extension>" for a file extension
-  ### param:  comes after the options
-  ###     param|<type>|<long>|<description>
-  ###     <type> = 1 for single parameters - e.g. param|1|output expects 1 parameter <output>
-  ###     <type> = n for list parameter    - e.g. param|n|inputs expects <input1> <input2> ... <input99>
 echo -n "
-#commented lines will be filtered
 flag|h|help|show usage
 flag|q|quiet|no output
 flag|v|verbose|output more
 flag|f|force|do not ask for confirmation (always yes)
 option|l|log_dir|folder for log files |log
 option|t|tmp_dir|folder for temp files|.tmp
-param|1|action|action to perform: action1/action2/...
-# there can only be 1 param|n and it should be the last
-param|1|input|input file
-param|1|output|output file
+param|1|action|user/repo/repos
+param|1|path|<user> or <user/repo>
+param|1|field|field to retrieve:  name
 " | grep -v '^#'
 }
 
@@ -49,22 +28,21 @@ main() {
     log "Updated: $prog_modified"
     log "Run as : $USER@$HOSTNAME"
     # add programs you need in your script here, like tar, wget, ffmpeg, rsync ...
-    verify_programs awk basename cut date dirname find grep head mkdir sed stat tput uname wc
+    verify_programs awk basename cut date dirname find grep head mkdir sed stat tput uname wc jq
     prep_log_and_temp_dir
 
-    action=$(lower_case "$action")
+    if [[ "$field" == .* ]] ; then
+      log "$field seems to have proper notation" 
+    else
+      field=".$field"
+      log "corrected field: [$field]"
+    fi
+
     case $action in
-    action1 )
-        # shellcheck disable=SC2154
-        perform_action1 "$input" "$output"
-        ;;
-
-    action2 )
-        perform_action2 "$input" "$output"
-        ;;
-
-    *)
-        die "action [$action] not recognized"
+    user )  gh_api  "/users/$path"          "${field:-.}" ;;
+    repo )  gh_api  "/repos/$path"          "${field:-.}" ;;
+    repos ) gh_api  "/users/$path/repos"    "${field:-.}" ;;
+    *)      die "action [$action] not recognized"
     esac
 }
 
@@ -72,16 +50,40 @@ main() {
 ## Put your helper scripts here
 #####################################################################
 
-perform_action1(){
-  echo "ACTION 1"
-  # < "$1"  do_stuff > "$2"
-}
+gh_api() {
+  # $1 = relative API URL
+  # $2 = jq query path
+  local relative="$1"
+  local api_endpoint="https://api.github.com"
+  local field="${2:-.}"
 
-perform_action2(){
-  echo "ACTION 2"
-  # < "$1"  do_other_stuff > "$2"
-}
+  if [[ -n "$GH_PERSONAL_TOKEN" ]] ; then
+    log "Using authentication [$GH_PERSONAL_ID]" 
+    local authentication="-u $GH_PERSONAL_ID:$GH_PERSONAL_TOKEN"
+  else
+    local authentication=""
+  fi
 
+  local full_url="$api_endpoint$relative"
+  local uniq=$(echo "$full_url" | hash 8)
+  # shellcheck disable=SC2154
+  local cached="$tmp_dir/unsplash.$uniq.json"
+  log "Cache [$cached]"
+  if [[ ! -f "$cached" ]] || grep -c '{' "$cached" >/dev/null; then
+    # only get the data once
+    log "URL = [$full_url]"
+    curl -s $authentication "$full_url" > "$cached"
+    if [[ $(< "$cached" wc -c) -lt 10 ]] ; then
+      rm "$cached"
+      die "API call to [$full_url] came back with empty response"
+    fi
+  fi
+  if [[ "$field" ==  "." ]] ; then
+    < "$cached" jq "${2:-.}"
+  else
+    < "$cached" jq "${2:-.}" | sed 's/"//g' | sed 's/,$//' | tee "$tmp_dir/query.$uniq$2.txt"
+  fi
+}
 
 #####################################################################
 ################### DO NOT MODIFY BELOW THIS LINE ###################
