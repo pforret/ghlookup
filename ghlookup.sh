@@ -421,7 +421,7 @@ parse_options() {
 lookup_script_data(){
   readonly script_prefix=$(basename "${BASH_SOURCE[0]}" .sh)
   readonly script_basename=$(basename "${BASH_SOURCE[0]}")
-  #readonly execution_day=$(date "+%Y-%m-%d")
+  readonly execution_day=$(date "+%Y-%m-%d")
   #readonly execution_year=$(date "+%Y")
 
    if [[ -z $(dirname "${BASH_SOURCE[0]}") ]]; then
