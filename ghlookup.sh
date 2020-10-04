@@ -2,7 +2,7 @@
 ### Created by Peter Forret ( pforret ) on 2020-10-04
 script_version="0.0.0"  # if there is a VERSION.md in this script's folder, it will take priority for version number
 readonly script_author="peter@forret.com"
-readonly script_creation="2020-10-04"
+#readonly script_creation="2020-10-04"
 readonly run_as_root=-1 # run_as_root: 0 = don't check anything / 1 = script MUST run as root / -1 = script MAY NOT run as root
 
 list_options() {
@@ -38,6 +38,7 @@ main() {
       log "corrected field: [$field]"
     fi
 
+    # shellcheck disable=SC2154
     case $action in
     user )  gh_api  "/users/$path"          "${field:-.}" ;;
     repo )  gh_api  "/repos/$path"          "${field:-.}" ;;
@@ -65,13 +66,14 @@ gh_api() {
   fi
 
   local full_url="$api_endpoint$relative"
-  local uniq=$(echo "$full_url" | hash 8)
+  local uniq
+  uniq=$(echo "$full_url" | hash 8)
   # shellcheck disable=SC2154
   local cached="$tmp_dir/unsplash.$uniq.json"
   log "Cache [$cached]"
   if [[ ! -f "$cached" ]] || grep -c '{' "$cached" >/dev/null; then
-    # only get the data once
     log "URL = [$full_url]"
+    # shellcheck disable=SC2086
     curl -s $authentication "$full_url" > "$cached"
     if [[ $(< "$cached" wc -c) -lt 10 ]] ; then
       rm "$cached"
@@ -419,8 +421,8 @@ parse_options() {
 lookup_script_data(){
   readonly script_prefix=$(basename "${BASH_SOURCE[0]}" .sh)
   readonly script_basename=$(basename "${BASH_SOURCE[0]}")
-  readonly execution_day=$(date "+%Y-%m-%d")
-  readonly execution_year=$(date "+%Y")
+  #readonly execution_day=$(date "+%Y-%m-%d")
+  #readonly execution_year=$(date "+%Y")
 
    if [[ -z $(dirname "${BASH_SOURCE[0]}") ]]; then
     # script called without path ; must be in $PATH somewhere
@@ -452,11 +454,6 @@ lookup_script_data(){
   log "In folder : [$script_install_folder]"
 
   [[ -f "$script_install_folder/VERSION.md" ]] && script_version=$(cat "$script_install_folder/VERSION.md")
-  if git status >/dev/null; then
-    readonly in_git_repo=1
-  else
-    readonly in_git_repo=0
-  fi
 }
 
 prep_log_and_temp_dir(){
@@ -490,7 +487,7 @@ import_env_if_any(){
   fi
   if [[ -f "./.env" ]] ; then
     log "Read config from [./.env]"
-    # shellcheck disable=SC1090
+    # shellcheck disable=SC1091
     source "./.env"
   fi
 }
