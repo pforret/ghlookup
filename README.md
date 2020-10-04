@@ -1,6 +1,6 @@
 ![Shellcheck CI](https://github.com/pforret/ghlookup/workflows/Shellcheck%20CI/badge.svg)
 ![Bash CI](https://github.com/pforret/ghlookup/workflows/Bash%20CI/badge.svg)
-[![basher install](https://img.shields.io/badge/basher-install-white?logo=gnu-bash&style=flat)](https://basher-packages.forret.com/package/)
+[![basher install](https://img.shields.io/badge/basher-install-white?logo=gnu-bash&style=flat)](https://basher.gitparade.com/package/)
 
 # ghlookup
 
