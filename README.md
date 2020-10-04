@@ -1,4 +1,4 @@
-# lookup_github
+# ghlookup
 
 Lookup Github info via API in bash
 
@@ -61,4 +61,4 @@ Lookup Github info via API in bash
 
 in 1 hour
 
-(c) 2020 Peter Forret
+&copy; 2020 Peter Forret - MIT License
