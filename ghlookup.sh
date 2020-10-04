@@ -58,7 +58,7 @@ gh_api() {
   local api_endpoint="https://api.github.com"
   local field="${2:-.}"
 
-  if [[ -n "$GH_PERSONAL_TOKEN" ]] ; then
+  if [[ -n "${GH_PERSONAL_TOKEN:-}" ]] ; then
     log "Using authentication [$GH_PERSONAL_ID]" 
     local authentication="-u $GH_PERSONAL_ID:$GH_PERSONAL_TOKEN"
   else
