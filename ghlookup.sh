@@ -13,9 +13,10 @@ flag|v|verbose|output more
 flag|f|force|do not ask for confirmation (always yes)
 option|l|log_dir|folder for log files |log
 option|t|tmp_dir|folder for temp files|.tmp
-param|1|action|user/repo/repos
-param|1|path|<user> or <user/repo>
-param|1|field|field to retrieve:  name
+option|a|accept|accept header (e.g. application/vnd.github.mercy-preview+json)|
+param|1|action|user/repo/repos/tags/langs/topics
+param|1|ident|<user> or <user/repo>
+param|1|field|field to retrieve: field to retrieve: . / .field / .[].name / @
 " | grep -v '^#'
 }
 
@@ -31,18 +32,51 @@ main() {
     verify_programs awk basename cut date dirname find grep head mkdir sed stat tput uname wc jq
     prep_log_and_temp_dir
 
-    if [[ "$field" == .* ]] ; then
-      log "$field seems to have proper notation" 
-    else
-      field=".$field"
-      log "corrected field: [$field]"
-    fi
-
     # shellcheck disable=SC2154
     case $action in
-    user )  gh_api  "/users/$path"          "${field:-.}" ;;
-    repo )  gh_api  "/repos/$path"          "${field:-.}" ;;
-    repos ) gh_api  "/users/$path/repos"    "${field:-.}" ;;
+    user )
+      gh_api  "/users/$ident"            "$field"
+       [[ "$field" == "@" ]] && field=".name"
+      log "field=/$field/"
+     ;;
+
+    repo )
+      [[ "$field" == "@" ]] && field=".description"
+      log "field=/$field/"
+      gh_api  "/repos/$ident"            "$field"
+      ;;
+
+    repos )
+      [[ "$field" == "@" ]] && field=".[].full_name"
+      log "field=/$field/"
+      gh_api  "/users/$ident/repos"      "$field"
+      ;;
+
+    tags )
+      [[ "$field" == "@" ]] && field=".[].name"
+      log "field=/$field/"
+      gh_api  "/repos/$ident/tags"       "$field"
+      ;;
+
+    langs )
+      [[ "$field" == "@" ]] && field="keys[]"
+      log "field=/$field/"
+      gh_api  "/repos/$ident/languages" "$field"
+      ;;
+
+    topics )
+      [[ "$field" == "@" ]] && field=".names[]"
+      log "field=/$field/"
+      accept="application/vnd.github.mercy-preview+json"
+      gh_api "/repos/$ident/topics"    "$field"
+      ;;
+
+    files )
+      [[ "$field" == "@" ]] && field="keys[]"
+      log "field=/$field/"
+      gh_api  "/repos/$ident/contents" "$field"
+      ;;
+
     *)      die "action [$action] not recognized"
     esac
 }
@@ -73,8 +107,13 @@ gh_api() {
   log "Cache [$cached]"
   if [[ ! -f "$cached" ]] || grep -c '{' "$cached" >/dev/null; then
     log "URL = [$full_url]"
+    if [[ -n "$accept" ]] ; then
+      curl_accept="-H 'Accept: $accept'"
+    else
+      curl_accept=""
+    fi
     # shellcheck disable=SC2086
-    curl -s $authentication "$full_url" > "$cached"
+    curl -s $authentication $curl_accept "$full_url" > "$cached"
     if [[ $(< "$cached" wc -c) -lt 10 ]] ; then
       rm "$cached"
       die "API call to [$full_url] came back with empty response"

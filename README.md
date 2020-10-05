@@ -18,9 +18,9 @@ Lookup Github info via API in bash
         -f|--force     : [flag] do not ask for confirmation (always yes) [default: off]
         -l|--log_dir <val>: [optn] folder for log files   [default: log]
         -t|--tmp_dir <val>: [optn] folder for temp files  [default: .tmp]
-        <action>  : [parameter] user/repo/repos
+        <action>  : [parameter] user/repo/repos/tags/topics
         <path>    : [parameter] <user> or <user/repo>
-        <field>   : [parameter] field to retrieve: e.g. .name
+        <field>   : [parameter] field to retrieve: . / .field / .[].name / @
 
 ## Installation
 
