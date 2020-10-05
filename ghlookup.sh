@@ -35,9 +35,9 @@ main() {
     # shellcheck disable=SC2154
     case $action in
     user )
-      gh_api  "/users/$ident"            "$field"
-       [[ "$field" == "@" ]] && field=".name"
+      [[ "$field" == "@" ]] && field=".name"
       log "field=/$field/"
+      gh_api  "/users/$ident"            "$field"
      ;;
 
     repo )
@@ -72,7 +72,7 @@ main() {
       ;;
 
     files )
-      [[ "$field" == "@" ]] && field="keys[]"
+      [[ "$field" == "@" ]] && field=".[].name"
       log "field=/$field/"
       gh_api  "/repos/$ident/contents" "$field"
       ;;

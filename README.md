@@ -8,9 +8,9 @@ Lookup Github info via API in bash
 
 ## Usage
 
-    Program: ghlookup 1.0.3 by peter@forret.com
+    Program: ghlookup 1.1.0 by peter@forret.com
     Updated: Oct  4 21:32:52 2020
-    Usage: ghlookup [-h] [-q] [-v] [-f] [-l <log_dir>] [-t <tmp_dir>] <action> <path> <field>
+    Usage: ghlookup [-h] [-q] [-v] [-f] [-l <log_dir>] [-t <tmp_dir>] [-a <accept>] <action> <ident> <field>
     Flags, options and parameters:
         -h|--help      : [flag] show usage [default: off]
         -q|--quiet     : [flag] no output [default: off]
@@ -18,10 +18,11 @@ Lookup Github info via API in bash
         -f|--force     : [flag] do not ask for confirmation (always yes) [default: off]
         -l|--log_dir <val>: [optn] folder for log files   [default: log]
         -t|--tmp_dir <val>: [optn] folder for temp files  [default: .tmp]
-        <action>  : [parameter] user/repo/repos/tags/topics
-        <path>    : [parameter] <user> or <user/repo>
-        <field>   : [parameter] field to retrieve: . / .field / .[].name / @
-
+        -a|--accept <val>: [optn] accept header (e.g. application/vnd.github.mercy-preview+json)
+        <action>  : [parameter] user/repo/repos/tags/langs/topics
+        <ident>   : [parameter] <user> or <user/repo>
+        <field>   : [parameter] field to retrieve: field to retrieve: . / .field / .[].name / @ 
+    
 ## Installation
 
 	basher install pforret/ghlookup
@@ -44,33 +45,57 @@ or
   "updated_at": "2020-09-24T15:31:55Z"
 }     
 
-> ghlookup repo cli/cli .
-{
-  "id": 212613049,
-  "node_id": "MDEwOlJlcG9zaXRvcnkyMTI2MTMwNDk=",
-  "name": "cli",
-  "full_name": "cli/cli",
+> ghlookup user cli @ 
+GitHub CLI                         
+
+> ghlookup repo laravel/laravel .        
+  {
+    "id": 1863329,
+    "node_id": "MDEwOlJlcG9zaXRvcnkxODYzMzI5",
+    "name": "laravel",
+    "full_name": "laravel/laravel",
     (...)
-  "network_count": 1219,
-  "subscribers_count": 460
-}
+    "network_count": 19510,
+    "subscribers_count": 4752
+} 
 
-> ghlookup repo cli/cli .license
-{
-  key: mit
-  name: MIT License
-  spdx_id: MIT
-  url: https://api.github.com/licenses/mit
-  node_id: MDc6TGljZW5zZTEz
-}   
+> ghlookup repo laravel/laravel .watchers
+  61821                              
 
-> ghlookup repo cli/cli .description
-GitHub’s official command line tool
+> ghlookup repos cli @
+cli/cli
+cli/scoop-gh
+cli/shurcooL-graphql
 
-> ghlookup repos cli ".[].name"
+> ghlookup topics alebcay/awesome-shell @
+awesome-list
+awesome
+list
+zsh
+fish
+bash
 cli
-scoop-gh
-shurcooL-graphql
+shell  
+
+> ghlookup tags laravel/laravel @ | head -1
+v8.0.3
+
+> ghlookup langs laravel/laravel @
+Blade
+PHP
+Shell
+
+> ghlookup files pforret/ghlookup @         
+.env.example
+.github
+.gitignore
+CHANGELOG.md
+LICENSE
+README.md
+VERSION.md
+ghlookup
+ghlookup.sh
+tests
 ```
 
 ## authenticated or not
