@@ -38,7 +38,7 @@ or
 ## Examples
 
 ```bash
-> ghlookup user cli .
+$ ghlookup user cli .
 {
   "login": "cli",
   "id": 59704711,
@@ -47,7 +47,7 @@ or
   "updated_at": "2020-09-24T15:31:55Z"
 }     
 
-> ghlookup user cli @ 
+$ ghlookup user cli @ 
 GitHub CLI                         
 
 > ghlookup repo laravel/laravel .        
@@ -61,15 +61,15 @@ GitHub CLI
     "subscribers_count": 4752
 } 
 
-> ghlookup repo laravel/laravel .watchers
+$ ghlookup repo laravel/laravel .watchers
   61821                              
 
-> ghlookup repos cli @
+$ ghlookup repos cli @
 cli/cli
 cli/scoop-gh
 cli/shurcooL-graphql
 
-> ghlookup topics alebcay/awesome-shell @
+$ ghlookup topics alebcay/awesome-shell @
 awesome-list
 awesome
 list
@@ -79,15 +79,15 @@ bash
 cli
 shell  
 
-> ghlookup tags laravel/laravel @ | head -1
+$ ghlookup tags laravel/laravel @ | head -1
 v8.0.3
 
-> ghlookup langs laravel/laravel @
+$ ghlookup langs laravel/laravel @
 Blade
 PHP
 Shell
 
-> ghlookup files pforret/ghlookup @         
+$ ghlookup files pforret/ghlookup @         
 .env.example
 .github
 .gitignore
