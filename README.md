@@ -4,7 +4,7 @@
 
 # ghlookup
 
-![ghlookup logo](ghlookup.jpg)
+![ghlookup logo](assets/ghlookup.jpg)
 
 Lookup Github info on repo/user/tags/topics/... via API in bash
 
